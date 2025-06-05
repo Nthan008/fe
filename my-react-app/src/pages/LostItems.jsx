@@ -5,6 +5,17 @@ import LostItemCard from "../components/LostItemCard";
 const categories = ["Electronic", "Peripheral", "Student tools", "Book", "Other"];
 const itemsPerPage = 8;
 
+const periodOptions = [
+  { label: "Filter by Period", value: "", disabled: true }, // placeholder
+  { label: "All", value: "all" },
+  { label: "Today", value: "today" },
+  { label: "Yesterday", value: "yesterday" },
+  { label: "Past 3 Days", value: "past3days" },
+  { label: "Past Week", value: "pastweek" },
+  { label: "Past Month", value: "pastmonth" },
+  { label: "Past Year", value: "pastyear" },
+];
+
 const dummyData = Array.from({ length: 20 }).map((_, i) => ({
   title: `Item ${i + 1} - ${i % 2 === 0 ? "Iphone 14" : "Laptop Asus"}`,
   date: "December 21, 2024",
@@ -19,11 +30,51 @@ const dummyData = Array.from({ length: 20 }).map((_, i) => ({
 }));
   
 
+function parseDate(dateStr) {
+  // Assumes format: "Month DD, YYYY"
+  return new Date(dateStr);
+}
+
+function isWithinPeriod(itemDate, period) {
+  const now = new Date();
+  const date = parseDate(itemDate);
+  const diffTime = now - date;
+  const diffDays = diffTime / (1000 * 60 * 60 * 24);
+
+  switch (period) {
+    case "today":
+      return (
+        date.getDate() === now.getDate() &&
+        date.getMonth() === now.getMonth() &&
+        date.getFullYear() === now.getFullYear()
+      );
+    case "yesterday":
+      const yesterday = new Date(now);
+      yesterday.setDate(now.getDate() - 1);
+      return (
+        date.getDate() === yesterday.getDate() &&
+        date.getMonth() === yesterday.getMonth() &&
+        date.getFullYear() === yesterday.getFullYear()
+      );
+    case "past3days":
+      return diffDays <= 3;
+    case "pastweek":
+      return diffDays <= 7;
+    case "pastmonth":
+      return diffDays <= 31;
+    case "pastyear":
+      return diffDays <= 366;
+    default:
+      return true;
+  }
+}
+
 export default function LostItemsPage() {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [showCategoryFilter, setShowCategoryFilter] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedPeriod, setSelectedPeriod] = useState("all");
   const dropdownRef = useRef(null);
 
   const toggleCategory = (category) => {
@@ -56,7 +107,8 @@ export default function LostItemsPage() {
       item.description.some((desc) =>
         desc.toLowerCase().includes(searchTerm.toLowerCase())
       );
-    return matchesCategory && matchesSearch;
+    const matchesPeriod = selectedPeriod === "all" || isWithinPeriod(item.date, selectedPeriod);
+    return matchesCategory && matchesSearch && matchesPeriod;
   });
 
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
@@ -120,10 +172,21 @@ export default function LostItemsPage() {
             )}
           </div>
 
-          {/* Filter by Period (placeholder) */}
-          <button className="border border-gray-300 px-4 py-2 rounded-full text-sm font-medium text-gray-700">
-            Filter by Period
-          </button>
+          {/* Filter by Period */}
+          <select
+            value={selectedPeriod}
+            onChange={(e) => {
+              setSelectedPeriod(e.target.value);
+              setCurrentPage(1); // reset to page 1 on filter change
+            }}
+            className="border border-gray-300 px-4 py-2 rounded-full text-sm font-medium text-gray-700"
+          >
+            {periodOptions.map((opt) => (
+              <option key={opt.value} value={opt.value} disabled={opt.disabled}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
         </div>
 
         {/* Cards */}

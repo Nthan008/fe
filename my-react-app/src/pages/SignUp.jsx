@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaEyeSlash } from "react-icons/fa";
+import toast from "react-hot-toast";
 
 export default function SignUp() {
   const navigate = useNavigate();
@@ -20,11 +21,42 @@ export default function SignUp() {
     }));
   };
 
+  // Password rule: at least 6 chars, at least 1 uppercase, 1 lowercase, and (number or symbol)
+  const isPasswordValid = (password) => {
+    return (
+      password.length >= 6 &&
+      /[A-Z]/.test(password) &&
+      /[a-z]/.test(password) &&
+      /[\d\W]/.test(password)
+    );
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Check for missing fields
+    if (
+      !formData.idCard.trim() ||
+      !formData.name.trim() ||
+      !formData.email.trim() ||
+      !formData.password ||
+      !formData.confirmPassword
+    ) {
+      toast.error("Please fill in all fields.");
+      return;
+    }
+
+    // Password match check
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match!");
+      toast.error("Passwords do not match!");
+      return;
+    }
+
+    // Password rule check
+    if (!isPasswordValid(formData.password)) {
+      toast.error(
+        "Password must be at least 6 characters, include uppercase, lowercase, and a number or symbol."
+      );
       return;
     }
 
@@ -41,15 +73,15 @@ export default function SignUp() {
       });
 
       if (response.ok) {
-        alert("Registration successful! Please sign in.");
+        toast.success("Registration successful! Please sign in.");
         navigate("/signin");
       } else {
         const data = await response.json();
-        alert(data.message);
+        toast.error(data.message);
       }
     } catch (error) {
       console.error("Error:", error);
-      alert("An error occurred. Please try again.");
+      toast.error("An error occurred. Please try again.");
     }
   };
 

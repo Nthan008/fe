@@ -1,6 +1,6 @@
 import { useContext, useRef, useState, useEffect } from "react";
 import { FaSearch, FaUserCircle, FaSignOutAlt, FaHistory, FaTachometerAlt, FaBars } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom"; // Import useLocation
 import { AuthContext } from "../context/AuthContext";
 import imgProfile from "../assets/ImgProfile.png";
 import logo from "../assets/logo.png";
@@ -12,10 +12,24 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
+  const location = useLocation(); // Get the current location
 
   const handleLogout = () => {
     logout();
     navigate("/signin");
+  };
+
+  const handleTeamClick = () => {
+    if (location.pathname === "/") {
+      // If already on the homepage, scroll to the "Our Team" section
+      const teamSection = document.querySelector("[ref='teamSectionRef']");
+      if (teamSection) {
+        teamSection.scrollIntoView({ behavior: "smooth" });
+      }
+    } else {
+      // Navigate to the homepage and scroll to the "Our Team" section
+      navigate("/", { state: { scrollToTeam: true } });
+    }
   };
 
   // Close dropdown on outside click
@@ -39,10 +53,14 @@ export default function Navbar() {
         <div className="flex items-center space-x-6">
           {/* Desktop Menu */}
           <div className="hidden md:flex space-x-6">
-            <a href="/lostitem" className="hover:underline text-sm font-bold" style={{ color: "#00137F" }}>
+            <a href="/lostitem" className="hover:underline text-sm font-bold text-[#00137F]">
               Lost Items
             </a>
-            <a href="#" className="hover:underline text-sm font-bold" style={{ color: "#00137F" }}>
+            <a
+              href="#"
+              onClick={handleTeamClick}
+              className="hover:underline text-sm font-bold text-[#00137F]"
+            >
               Our Team
             </a>
           </div>
@@ -59,18 +77,16 @@ export default function Navbar() {
               {dropdownOpen && (
                 <div className="profile-dropdown-menu">
                   <a
-                    href="/"
-                    className="flex items-center px-4 py-2 text-sm font-bold hover:bg-gray-100"
-                    style={{ color: "#00137F" }}
-                  >
-                    <FaTachometerAlt className="mr-2" /> Dashboard
-                  </a>
-                  <a
                     href="/claim-history"
-                    className="flex items-center px-4 py-2 text-sm font-bold hover:bg-gray-100"
-                    style={{ color: "#00137F" }}
+                    className="flex items-center px-4 py-2 text-sm font-bold hover:bg-gray-100 text-[#00137F]"
                   >
                     <FaHistory className="mr-2" /> Claim History
+                  </a>
+                  <a
+                    href="/"
+                    className="flex items-center px-4 py-2 text-sm font-bold hover:bg-gray-100 text-[#00137F]"
+                  >
+                    <FaTachometerAlt className="mr-2" /> Dashboard
                   </a>
                   <button
                     onClick={handleLogout}
@@ -96,10 +112,14 @@ export default function Navbar() {
             </button>
             {menuOpen && (
               <div className="mobile-menu-dropdown">
-                <a href="/lostitem">
+                <a href="/lostitem" className="flex items-center px-4 py-2 text-sm font-bold text-[#00137F] hover:bg-gray-100">
                   <FaTachometerAlt className="mr-2" /> Lost Items
                 </a>
-                <a href="#">
+                <a
+                  href="#"
+                  onClick={handleTeamClick}
+                  className="flex items-center px-4 py-2 text-sm font-bold text-[#00137F] hover:bg-gray-100"
+                >
                   <FaHistory className="mr-2" /> Our Team
                 </a>
               </div>

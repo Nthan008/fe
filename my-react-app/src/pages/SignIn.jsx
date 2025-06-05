@@ -1,6 +1,7 @@
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import toast from "react-hot-toast";
 
 export default function SignIn() {
   const { login } = useContext(AuthContext);
@@ -10,6 +11,12 @@ export default function SignIn() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Check for empty fields
+    if (!email.trim() || !password) {
+      toast.error("Please fill in both email and password.");
+      return;
+    }
 
     try {
       const response = await fetch("http://localhost:5000/login", {
@@ -21,15 +28,16 @@ export default function SignIn() {
       if (response.ok) {
         const data = await response.json();
         login(data.token); // Update global state
-        alert("Login successful!");
+        toast.success("Login successful!");
         navigate("/");
       } else {
         const data = await response.json();
-        alert(data.message);
+        // Show error from backend or a generic message
+        toast.error(data.message || "Invalid credentials. Please try again.");
       }
     } catch (error) {
       console.error("Error:", error);
-      alert("An error occurred. Please try again.");
+      toast.error("An error occurred. Please try again.");
     }
   };
 
