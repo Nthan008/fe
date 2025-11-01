@@ -4,6 +4,6 @@ import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  
+  base: '/fe/', // Replace 'fe' with your repository name
   plugins: [react(),tailwindcss()],
 })

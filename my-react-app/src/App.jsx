@@ -9,6 +9,8 @@ import HomePage from "./pages/HomePage";
 import LostItems from "./pages/LostItems";
 import RequestMeeting from "./pages/request-meeting";
 import ClaimHistory from "./pages/ClaimHistory";
+import UserDashboard from "./pages/user-dashboard";
+import Profile from "./pages/profile";
 import { Toaster } from "react-hot-toast";
 import PageTransitionWrapper from "./layouts/PageTransitionWrapper";
 
@@ -23,6 +25,8 @@ function AppRoutes() {
         <Route path="/lostitem" element={<LostItems />} />
         <Route path="/request-meeting" element={<RequestMeeting />} />
         <Route path="/claim-history" element={<ClaimHistory />} />
+        <Route path="/dashboard" element={<UserDashboard />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="*" element={<h1>404 Not Found</h1>} />
       </Routes>
     </PageTransitionWrapper>

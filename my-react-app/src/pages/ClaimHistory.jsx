@@ -62,6 +62,8 @@ export default function ClaimHistory() {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [showCategoryFilter, setShowCategoryFilter] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 4;
+  const [visibleCount, setVisibleCount] = useState(itemsPerPage);
   const dropdownRef = useRef(null);
 
   // Dummy data for demonstration
@@ -152,22 +154,16 @@ export default function ClaimHistory() {
     return matchesCategory && matchesSearch && matchesPeriod;
   });
 
-  // Pagination logic
-  const itemsPerPage = 4;
-  const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
-
-  const paginatedItems = filteredItems.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-
-  const handlePageChange = (page) => {
-    if (page >= 1 && page <= totalPages) setCurrentPage(page);
-  };
-
+  // Pagination logic replaced with "Load More"
   useEffect(() => {
-    setCurrentPage(1);
+    setVisibleCount(itemsPerPage);
   }, [searchTerm, selectedPeriod, selectedCategories]);
+
+  const paginatedItems = filteredItems.slice(0, visibleCount);
+
+  const handleLoadMore = () => {
+    setVisibleCount((prev) => prev + itemsPerPage);
+  };
 
   return (
     <div className="bg-white min-h-screen px-6 pt-24 pb-16">
@@ -250,43 +246,14 @@ export default function ClaimHistory() {
         )}
       </div>
 
-      {/* Pagination Controls */}
-      {totalPages > 1 && (
-        <div className="flex justify-center mt-8 items-center space-x-2 text-sm font-medium flex-wrap">
+      {/* Load More Button */}
+      {visibleCount < filteredItems.length && (
+        <div className="flex justify-center mt-8">
           <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            className={`px-3 py-1 rounded ${
-              currentPage === 1
-                ? "text-gray-400"
-                : "text-blue-900"
-            }`}
+            onClick={handleLoadMore}
+            className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-full font-semibold"
           >
-            Prev
-          </button>
-          {Array.from({ length: totalPages }).map((_, i) => (
-            <button
-              key={i}
-              onClick={() => handlePageChange(i + 1)}
-              className={`px-3 py-1 rounded ${
-                currentPage === i + 1
-                  ? "bg-green-500 text-white"
-                  : "text-blue-900"
-              }`}
-            >
-              {i + 1}
-            </button>
-          ))}
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className={`px-3 py-1 rounded ${
-              currentPage === totalPages
-                ? "text-gray-400"
-                : "text-blue-900"
-            }`}
-          >
-            Next
+            Load More
           </button>
         </div>
       )}

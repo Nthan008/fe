@@ -123,10 +123,20 @@ export default function LostItemCard({
 
       {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(59,130,246,0.5)]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(59,130,246,0.5)] px-2 sm:px-0">
           <div
             ref={modalRef}
-            className="bg-[#C8E3FF] text-[#04004E] p-8 rounded-2xl shadow-xl w-full max-w-md relative"
+            className="bg-[#C8E3FF] text-[#04004E] p-4 sm:p-8 rounded-2xl shadow-xl w-full max-w-md relative
+        max-h-[90vh] overflow-y-auto
+        sm:max-h-[80vh] sm:overflow-y-auto
+        "
+            style={{
+              // Extra padding for mobile
+              paddingLeft: '1.5rem',
+              paddingRight: '1.5rem',
+              paddingTop: '1.5rem',
+              paddingBottom: '1.5rem',
+            }}
           >
             <button
               onClick={closeModal}

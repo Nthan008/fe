@@ -46,7 +46,7 @@ export default function Navbar() {
   return (
     <nav className="navbar">
       <div className="navbar-container">
-        <div className="navbar-logo">
+        <div className="navbar-logo cursor-pointer" onClick={() => navigate("/")}>
           <img src={logo} alt="Logo" />
           <span className="navbar-title">Lost & Found</span>
         </div>
@@ -83,10 +83,16 @@ export default function Navbar() {
                     <FaHistory className="mr-2" /> Claim History
                   </a>
                   <a
-                    href="/"
+                    href="/dashboard"
                     className="flex items-center px-4 py-2 text-sm font-bold hover:bg-gray-100 text-[#00137F]"
                   >
                     <FaTachometerAlt className="mr-2" /> Dashboard
+                  </a>
+                  <a
+                    href="/profile"
+                    className="flex items-center px-4 py-2 text-sm font-bold hover:bg-gray-100 text-[#00137F]"
+                  >
+                    <FaUserCircle className="mr-2" /> Profile
                   </a>
                   <button
                     onClick={handleLogout}

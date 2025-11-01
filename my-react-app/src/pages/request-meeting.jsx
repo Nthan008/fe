@@ -136,12 +136,17 @@ export default function RequestMeeting() {
                 {timeSlots.map((time, index) => (
                   <label
                     key={index}
-                    className="p-2 border border-gray-300 rounded-md text-center cursor-pointer hover:bg-blue-100"
+                    className={`p-2 border border-gray-300 rounded-md text-center cursor-pointer hover:bg-blue-100
+                      ${selectedTime === time ? "bg-blue-600 text-white border-blue-600 font-bold" : ""}
+                    `}
+                    onClick={() => setSelectedTime(time)}
                   >
                     <input
                       type="radio"
                       name="meetingTime"
                       value={time}
+                      checked={selectedTime === time}
+                      onChange={() => setSelectedTime(time)}
                       className="hidden"
                     />
                     <span className="text-sm font-medium">{time}</span>
